@@ -13,7 +13,7 @@
 
 #Import libraries.
 from flask import Flask, render_template, request
-from twilio.twiml.voice_response import VoiceResponse
+from twilio.rest import Client
 
 app = Flask(__name__, template_folder = "templates")
 
@@ -22,20 +22,21 @@ def index():
 
 	return render_template('index.html')
 
-@app.route('/sms', methods = ["POST"])
+@app.route('/SMS/', methods = ['GET', 'POST'])
 def sms():
-	if request.method == 'POST':
-		account_sid = ""
-		auth_token = ""
+	account_sid = ""
+	auth_token = ""
 
-		client = Client(account_sid, auth_token)
+	client = Client(account_sid, auth_token)
+	number = request.form['From']
 
-		call = client.calls.create(
-			url = "http://demo.twilio.com/docs/voice.xml",
-			to = "+52",
-			from_ = "+1"
-			)
+	call = client.calls.create(
+		url = "http://demo.twilio.com/docs/voice.xml",
+		to = number,
+		from_ = "+1"
+		)
 
-app.run(debug = True)
+	return render_template('index.html')
 
-
+if __name__ == '__main__':
+	app.run(debug = True)
